@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Entities\Transaction;
+
 /**
  * Interface ServiceInterface
  * @package App\Services
@@ -15,8 +17,10 @@ interface ServiceInterface
     public function init($args = null): string;
 
     /**
-     * @param null $args
+     * @param Transaction $transaction
+     * @param bool $success
+     *
      * @return mixed
      */
-    public function confirm($args = null);
+    public function confirm(Transaction $transaction, bool $success);
 }

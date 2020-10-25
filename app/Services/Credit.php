@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Accounting\PaymentCore;
+use App\Entities\Transaction;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -31,15 +32,29 @@ class Credit extends PaymentCore implements ServiceInterface
         $this->price = $args['price'];
         $this->createInvoice();
         $this->initPayment();
-        return $this->paymentLink;
+        return $this->paymentLink();
     }
 
     /**
-     * @param null $args
+     * @param Transaction $transaction
+     * @param bool $success
+     *
      * @return mixed|void
      */
-    public function confirm($args = null)
+    public function confirm(Transaction $transaction, bool $success)
     {
-        // TODO: Implement confirm() method.
+        $this->confirmPayment($transaction, $success);
+
+        if ($success) {
+            $transaction->invoice->update([
+                'status' => 'PAID'
+            ]);
+            $transaction->invoice->user->update([
+                'credit' => $transaction->invoice->user->credit + $transaction->price
+            ]);
+            $transaction->invoice->update([
+                'status' => 'SUCCESS'
+            ]);
+        }
     }
 }

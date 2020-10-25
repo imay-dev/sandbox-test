@@ -14,14 +14,10 @@ class ServiceTableSeeder extends Seeder
     {
         Service::insert([
             'title' => 'credit',
-            'class' => 'App\\Services\\Credit'
+            'class' => 'App\\Services\\Credit',
+            'is_active' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
-        Role::insert(config('role_data.roles'));
-
-        $permissions = [];
-        foreach (config('permission_data.permissions') as $permission) {
-            array_push($permissions, $permission['name']);
-        }
-        Role::findByName('super.admin', 'api')->syncPermissions($permissions);
     }
 }

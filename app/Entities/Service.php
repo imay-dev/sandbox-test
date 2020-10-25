@@ -21,4 +21,8 @@ class Service extends Model
         'is_active'
     ];
 
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
 }

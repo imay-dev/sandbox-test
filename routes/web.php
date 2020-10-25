@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,10 +14,30 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'HomeController@index')->name('home');
+
+
+Route::group([
+    'middleware' => 'auth',
+    'prefix' => 'credit'
+], function () {
+    Route::get('/', 'Services\CreditController@index')->name('credit.index');
+    Route::post('/increase', 'Services\CreditController@increase')->name('credit.increase');
+});
+
+Route::group([
+    'middleware' => 'auth',
+    'prefix' => 'payment'
+], function () {
+    Route::get('/confirm', 'PaymentController@confirm')->name('payment.confirm');
+});
+
+Route::group([
+    'middleware' => 'auth',
+    'prefix' => 'transaction'
+], function () {
+    Route::get('/export/{type}', 'TransactionController@export')->name('transaction.export');
+});

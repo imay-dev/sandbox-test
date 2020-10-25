@@ -39,4 +39,9 @@ class Transaction extends Model
         return $this->belongsTo(Invoice::class);
     }
 
+    public static function getByReference($id)
+    {
+        return Transaction::with(['invoice', 'invoice.service', 'invoice.user'])->where('reference_id', $id)->first();
+    }
+
 }

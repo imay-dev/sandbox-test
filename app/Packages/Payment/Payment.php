@@ -190,6 +190,27 @@ class Payment
         return $this;
     }
 
+
+    /**
+     * Get driver
+     *
+     * @return string
+     */
+    public function getDriver(): string
+    {
+        return $this->driver;
+    }
+
+    /**
+     * Get transactionId
+     *
+     * @return string
+     */
+    public function getTransactionId(): string
+    {
+        return $this->invoice->getTransactionId();
+    }
+
     /**
      * Purchase the invoice
      *

@@ -65,6 +65,11 @@ abstract class PaymentCore
      */
     protected $transaction;
 
+    /**
+     * @var bool $success
+     */
+    protected $success;
+
 
     /**
      * PaymentCore constructor.
@@ -114,37 +119,81 @@ abstract class PaymentCore
     }
 
     /**
-     * $paymentInvoice Setter
+     * Confirm Payment
      *
+     * @param Transaction $transaction
+     * @param bool $success
+     * @return string
+     */
+    public function confirmPayment(Transaction $transaction, bool $success)
+    {
+        $this->setTransaction($transaction);
+        $this->success = $success;
+        $this->updateTransaction();
+    }
+
+    /**
+     * $transaction Setter
+     *
+     * @param Transaction $transaction
      * @return void
      */
-    private function setPaymentInvoice()
+    public function setTransaction(Transaction $transaction)
     {
-        $this->paymentInvoice = (new Invoice)->amount($this->price);
+        $this->transaction = $transaction;
     }
 
     /**
      * $transactionId Setter
      *
+     * @param string|null $transactionId
      * @return void
      */
-    private function setTransactionId()
+    public function setTransactionId(string $transactionId = null)
     {
-        $this->transactionId = $this->payment;
+        $this->transactionId = $transactionId ?? $this->payment->getTransactionId();
     }
+
 
     /**
      * $paymentInvoice Setter
+     *
+     * @return void
+     * @throws \Exception
+     */
+    private function setPaymentInvoice()
+    {
+        $this->paymentInvoice = (new PaymentInvoice)
+            ->amount($this->price)
+            ->detail([
+                'invoice_id' => $this->invoice->id
+            ]);
+    }
+
+    /**
+     * Create Transaction (Init)
      *
      * @return void
      */
     private function createTransaction()
     {
         $this->transaction = Transaction::create([
-            'driver' => $this->payment->driver,
+            'driver' => $this->payment->getDriver(),
             'price' => $this->price,
             'reference_id' => $this->transactionId,
             'invoice_id' => $this->invoice->id,
+        ]);
+    }
+
+    /**
+     * Update Transaction (Confirm)
+     *
+     * @return void
+     */
+    private function updateTransaction()
+    {
+        $this->transaction = $this->transaction->update([
+            'status' => $this->success ? 'SUCCEED' : 'FAILED',
         ]);
     }
 

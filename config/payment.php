@@ -19,7 +19,7 @@ return [
     |
     | These are the list of drivers to use for this package.
     | You can change the name. Then you'll have to change
-    | it in the map array too.
+    | it in the map array too.init
     |
     */
     'drivers' => [

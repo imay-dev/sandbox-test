@@ -14,6 +14,7 @@ class CreateInvoicesTable extends Migration
 	public function up()
 	{
 		Schema::create('invoices', function (Blueprint $table) {
+            $table->engine = "innoDB";
 			$table->bigIncrements('id');
 
 			$table->decimal('price', 15, 2);
